@@ -26,8 +26,12 @@
 </template>
 
 <script setup>
-// APIキーとAPIのURLを定数で定義
-const X_API_KEY = "ST9um6onAEbC10KaCaeCdJOXWjj51ZgRsnwhsP1z";
+//セキュリティ APIキーとAPIのURLを定数で定義 
+// const config = useRuntimeConfig();
+// const X_API_KEY = config.apiKey;
+
+//とりあえずAPIキーを直接書いてみる
+const X_API_KEY = "ST9um6onAEbC10KaCaeCdJOXWjj51ZgRsnwhsP1z"
 const API_PREFECTURES =
   "https://opendata.resas-portal.go.jp/api/v1/prefectures";
 const API_PREF_POPULATION =
@@ -131,7 +135,7 @@ async function onPrefectureChange() {
 
 // 都道府県データを取得
 onMounted(async () => {
-  await fetchPrefectures(); 
+  await fetchPrefectures();
   selectedPrefectures.value = ["13"];
   await onPrefectureChange();
 });

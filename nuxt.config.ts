@@ -44,9 +44,9 @@ export default defineNuxtConfig({
   },
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {},
-
-  // Public runtime config
-  //   publicRuntimeConfig: {
-  //     resasApiKey: process.env.RESAS_API_KEY || "",
-  //   },
+  //runtime config
+  // セキュリティ 環境変数
+  runtimeConfig: {
+    apiKey: process.env.API_KEY || "",
+  },
 });
