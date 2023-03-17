@@ -1,10 +1,30 @@
 <template>
-  <highchart :options="chartOptions" />
+  <div >
+    <!-- タイトル表示 -->
+    <h2 class="title">都道府県を選択</h2>
+    <!-- 都道府県のチェックボックスのコンテナ -->
+    <div class="prefectures-container">
+      <!-- 都道府県ごとのチェックボックスとラベル -->
+      <div
+        class="prefecture-item"
+        v-for="prefecture in prefectures"
+        :key="prefecture.prefCode"
+      >
+        <input
+          type="checkbox"
+          :id="prefecture.prefCode"
+          :value="prefecture.prefCode"
+          v-model="selectedPrefectures"
+          @change="onPrefectureChange"
+        />
+        <label :for="prefecture.prefCode">{{ prefecture.prefName }}</label>
+      </div>
+    </div>
+    <highchart :options="chartOptions" />
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-
 const X_API_KEY = "ST9um6onAEbC10KaCaeCdJOXWjj51ZgRsnwhsP1z";
 const API_PREFECTURES =
   "https://opendata.resas-portal.go.jp/api/v1/prefectures";
@@ -12,62 +32,83 @@ const API_PREF_POPULATION =
   "https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear";
 
 const chartOptions = ref({
-  chart: {
-    renderTo: "container",
-    type: "bar",
-  },
   title: {
-    text: "Fruit Consumption",
+    text: "年度別総人口推移",
+    style: {
+      fontSize: "1.5rem",
+      fontWeight: "bold",
+    },
   },
   xAxis: {
-    categories: ["Apples", "Bananas", "Oranges"],
+    title: {
+      text: "年度",
+    },
+    categories: ["1990", "2000", "2010", "2020"],
+    tickInterval: 1,
   },
   yAxis: {
     title: {
-      text: "Fruit eaten",
+      text: "総人口 (万人)",
     },
+    labels: {
+      formatter: function () {
+        return this.value / 100000;
+      },
+    },
+    tickInterval: 1000000,
   },
   series: [
     {
-      name: "Jane",
-      data: [1, 0, 4],
+      name: "東京都",
+      data: [12000000, 13000000, 13500000, 14000000],
     },
     {
-      name: "John",
-      data: [5, 7, 3],
+      name: "大阪府",
+      data: [8500000, 8800000, 9000000, 9200000],
     },
   ],
+  plotOptions: {
+    series: {
+      lineWidth: 2,
+      marker: {
+        radius: 4,
+      },
+    },
+  },
 });
 
-// async function fetchPopulationData() {
-//   const response = await fetch(API_PREFECTURES, {
-//     headers: { "X-API-KEY": X_API_KEY },
-//   });
-//   const data = await response.json();
-//   const prefectureCodes = data.result.map((pref) => pref.prefCode);
+// 都道府県データと選択された都道府県のリストを保持するref
+const prefectures = ref([]);
+const selectedPrefectures = ref([]);
 
-//   const populationPromises = prefectureCodes.map(async (code) => {
-//     const response = await fetch(`${API_PREF_POPULATION}?prefCode=${code}`, {
-//       headers: { "X-API-KEY": X_API_KEY },
-//     });
-//     const data = await response.json();
-//     return data.result.data[0].data;
-//   });
+// 都道府県データを取得する非同期関数
+async function fetchPrefectures() {
+  const response = await fetch(API_PREFECTURES, {
+    headers: { "X-API-KEY": X_API_KEY },
+  });
+  const data = await response.json();
+  prefectures.value = data.result;
+}
 
-//   const populationData = await Promise.all(populationPromises);
-
-//   const series = populationData.map((data, index) => {
-//     return {
-//       name: data.result[index].prefName,
-//       data: data.map((yearData) => yearData.value),
-//     };
-//   });
-
-//   const categories = populationData[0].map((yearData) => yearData.year);
-
-//   chartOptions.value.xAxis[0].categories = categories;
-//   chartOptions.value.series = series;
-// }
-
-// onMounted(fetchPopulationData);
+// 都道府県データを取得
+fetchPrefectures();
 </script>
+
+<style scoped>
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.prefectures-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-gap: 10px;
+  justify-items: center;
+  align-items: center;
+}
+
+.prefecture-item {
+  text-align: center;
+}
+</style>
