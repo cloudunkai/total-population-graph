@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div>
     <!-- タイトル表示 -->
     <h2 class="title">都道府県を選択</h2>
     <!-- 都道府県のチェックボックスのコンテナ -->
@@ -15,6 +15,7 @@
           :id="prefecture.prefCode"
           :value="prefecture.prefCode"
           v-model="selectedPrefectures"
+          :disabled="isLoading"
           @change="onPrefectureChange"
         />
         <label :for="prefecture.prefCode">{{ prefecture.prefName }}</label>
@@ -25,12 +26,14 @@
 </template>
 
 <script setup>
+// APIキーとAPIのURLを定数で定義
 const X_API_KEY = "ST9um6onAEbC10KaCaeCdJOXWjj51ZgRsnwhsP1z";
 const API_PREFECTURES =
   "https://opendata.resas-portal.go.jp/api/v1/prefectures";
 const API_PREF_POPULATION =
   "https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear";
 
+// グラフのオプション
 const chartOptions = ref({
   title: {
     text: "年度別総人口推移",
@@ -43,39 +46,34 @@ const chartOptions = ref({
     title: {
       text: "年度",
     },
-    categories: ["1990", "2000", "2010", "2020"],
-    tickInterval: 1,
+    categories: [],
   },
   yAxis: {
     title: {
-      text: "総人口 (万人)",
+      text: "総人口",
     },
     labels: {
       formatter: function () {
-        return this.value / 100000;
+        return this.value;
       },
     },
     tickInterval: 1000000,
   },
-  series: [
-    {
-      name: "東京都",
-      data: [12000000, 13000000, 13500000, 14000000],
-    },
-    {
-      name: "大阪府",
-      data: [8500000, 8800000, 9000000, 9200000],
-    },
-  ],
+  series: [],
   plotOptions: {
     series: {
       lineWidth: 2,
       marker: {
         radius: 4,
       },
+      label: {
+        connectorAllowed: false,
+      },
     },
   },
 });
+// ローディングFLAG
+const isLoading = ref(false);
 
 // 都道府県データと選択された都道府県のリストを保持するref
 const prefectures = ref([]);
@@ -90,8 +88,53 @@ async function fetchPrefectures() {
   prefectures.value = data.result;
 }
 
+// 都道府県別の人口データを取得する非同期関数
+async function fetchPopulation(prefCode) {
+  const response = await fetch(`${API_PREF_POPULATION}?prefCode=${prefCode}`, {
+    headers: { "X-API-KEY": X_API_KEY },
+  });
+  const data = await response.json();
+  return data.result.data[0].data;
+}
+
+// 都道府県が選択された時に呼び出される関数
+async function onPrefectureChange() {
+  isLoading.value = true;
+  // 都道府県別の人口データを取得する非同期関数を呼び出す
+  const populationPromises = selectedPrefectures.value.map((prefCode) =>
+    fetchPopulation(prefCode)
+  );
+  // 都道府県別の人口データを取得する
+  const populationData = await Promise.all(populationPromises);
+
+  const series = selectedPrefectures.value.map((prefCode, index) => {
+    const prefData = populationData[index];
+    const data = prefData.map((data) => data.value);
+    // 年度の配列を生成
+    const years = populationData[0].map((data) => data.year.toString());
+    // chartOptionsのxAxis.categoriesに年度を設定
+    chartOptions.value.xAxis.categories = years;
+    // 都道府県名を取得
+    const pref = prefectures.value.find((pref) => pref.prefCode === prefCode);
+    // 都道府県名が取得できない場合は東京都を設定
+    const prefName = pref ? pref.prefName : "東京都";
+
+    // グラフのデータを作成
+    return {
+      name: prefName,
+      data,
+    };
+  });
+  chartOptions.value.series = series;
+  isLoading.value = false;
+}
+
 // 都道府県データを取得
-fetchPrefectures();
+onMounted(async () => {
+  await fetchPrefectures(); 
+  selectedPrefectures.value = ["13"];
+  await onPrefectureChange();
+});
 </script>
 
 <style scoped>
@@ -106,6 +149,9 @@ fetchPrefectures();
   grid-gap: 10px;
   justify-items: center;
   align-items: center;
+  overflow-y: auto;
+  height: 20vh;
+  margin-bottom: 16px;
 }
 
 .prefecture-item {

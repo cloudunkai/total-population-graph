@@ -1,9 +1,14 @@
 <template>
   <div class="container">
-    <h1>都道府県別の総人口推移グラフ</h1>
+    <Loading :is-loading="isLoading" />
     <Chart />
   </div>
 </template>
+
+<script setup>
+const isLoading = ref(false);
+</script>
+
 <style scoped>
 .container {
   padding: 32px;
