@@ -6,8 +6,8 @@
 </template>
 
 <script setup>
-const lodingStore = useLodingStore();
-const { state } = lodingStore;
+const loadingStore = useLoadingStore();
+const { state } = loadingStore;
 // const props = defineProps({
 //   isLoading: {
 //     type: Boolean,

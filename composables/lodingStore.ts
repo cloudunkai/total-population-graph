@@ -5,7 +5,7 @@ type LoadingState = {
   loading: boolean;
 };
 
-export const useLodingStore = () => {
+export const useLoadingStore = () => {
   const state = useState<LoadingState>("loading_state", () => ({
     loading: false
   }));

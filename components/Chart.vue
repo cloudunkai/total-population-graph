@@ -15,7 +15,7 @@
           :id="prefecture.prefCode"
           :value="prefecture.prefCode"
           v-model="selectedPrefectures"
-          :disabled="isLoading"
+          :disabled="state.loading"
           @change="onPrefectureChange"
         />
         <label :for="prefecture.prefCode">{{ prefecture.prefName }}</label>
@@ -79,7 +79,8 @@ const chartOptions = ref({
 });
 // ローディングFLAG
 // const isLoading = ref(false);
-const loadingStore = useLodingStore();
+const loadingStore = useLoadingStore();
+const { state } = loadingStore;
 
 // 都道府県データと選択された都道府県のリストを保持するref
 const prefectures = ref([]);

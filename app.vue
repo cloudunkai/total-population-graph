@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
   const nuxtApp = useNuxtApp();
-  const loadingStore = useLodingStore();
+  const loadingStore = useLoadingStore();
   
   nuxtApp.hook("page:start", () => {
     loadingStore.setLoading(true);
