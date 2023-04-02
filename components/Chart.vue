@@ -6,15 +6,15 @@
     <div class="prefectures-container">
       <!-- 都道府県ごとのチェックボックスとラベル -->
       <div
-        class="prefecture-item"
         v-for="prefecture in prefectures"
         :key="prefecture.prefCode"
+        class="prefecture-item"
       >
         <input
-          type="checkbox"
           :id="prefecture.prefCode"
-          :value="prefecture.prefCode"
           v-model="selectedPrefectures"
+          type="checkbox"
+          :value="prefecture.prefCode"
           :disabled="state.loading"
           @change="onPrefectureChange"
         />
@@ -27,12 +27,12 @@
 </template>
 
 <script setup>
-//セキュリティ APIキーとAPIのURLを定数で定義 
+// セキュリティ APIキーとAPIのURLを定数で定義
 // const config = useRuntimeConfig();
 // const X_API_KEY = config.apiKey;
 
-//とりあえずAPIキーを直接書いてみる
-const X_API_KEY = "ST9um6onAEbC10KaCaeCdJOXWjj51ZgRsnwhsP1z"
+// とりあえずAPIキーを直接書いてみる
+const X_API_KEY = "ST9um6onAEbC10KaCaeCdJOXWjj51ZgRsnwhsP1z";
 const API_PREFECTURES =
   "https://opendata.resas-portal.go.jp/api/v1/prefectures";
 const API_PREF_POPULATION =

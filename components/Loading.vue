@@ -1,7 +1,7 @@
 <!-- LoadingPage -->
 <template>
   <div v-if="state.loading" class="loading-overlay">
-    <div class="spinner"></div>
+    <div class="spinner" />
   </div>
 </template>
 

@@ -44,7 +44,7 @@ export default defineNuxtConfig({
   },
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {},
-  //runtime config
+  // runtime config
   // セキュリティ 環境変数
   runtimeConfig: {
     apiKey: process.env.API_KEY || "",

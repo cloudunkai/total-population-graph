@@ -1,7 +1,9 @@
 <template>
   <div>
     <header class="header">
-      <slot name="header"><h2>都道府県別の総人口推移グラフ</h2></slot>
+      <slot name="header">
+        <h2>都道府県別の総人口推移グラフ</h2>
+      </slot>
     </header>
     <main>
       <slot />

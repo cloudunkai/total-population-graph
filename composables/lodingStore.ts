@@ -7,7 +7,7 @@ type LoadingState = {
 
 export const useLoadingStore = () => {
   const state = useState<LoadingState>("loading_state", () => ({
-    loading: false
+    loading: false,
   }));
   return {
     state: readonly(state),
@@ -16,5 +16,5 @@ export const useLoadingStore = () => {
 };
 
 const setLoading = (state: Ref<LoadingState>) => {
-  return (loading:boolean) => state.value.loading = loading;
+  return (loading: boolean) => (state.value.loading = loading);
 };
