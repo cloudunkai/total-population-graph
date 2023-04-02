@@ -1,17 +1,19 @@
 <!-- LoadingPage -->
 <template>
-  <div v-if="isLoading" class="loading-overlay">
+  <div v-if="state.loading" class="loading-overlay">
     <div class="spinner"></div>
   </div>
 </template>
 
 <script setup>
-const props = defineProps({
-  isLoading: {
-    type: Boolean,
-    required: true,
-  },
-});
+const lodingStore = useLodingStore();
+const { state } = lodingStore;
+// const props = defineProps({
+//   isLoading: {
+//     type: Boolean,
+//     required: true,
+//   },
+// });
 </script>
 
 <style scoped>

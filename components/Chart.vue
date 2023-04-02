@@ -22,6 +22,7 @@
       </div>
     </div>
     <highchart :options="chartOptions" />
+    <!-- <Loading :is-loading="isLoading" /> -->
   </div>
 </template>
 
@@ -77,7 +78,8 @@ const chartOptions = ref({
   },
 });
 // ローディングFLAG
-const isLoading = ref(false);
+// const isLoading = ref(false);
+const loadingStore = useLodingStore();
 
 // 都道府県データと選択された都道府県のリストを保持するref
 const prefectures = ref([]);
@@ -103,7 +105,8 @@ async function fetchPopulation(prefCode) {
 
 // 都道府県が選択された時に呼び出される関数
 async function onPrefectureChange() {
-  isLoading.value = true;
+  // isLoading.value = true;
+  loadingStore.setLoading(true);
   // 都道府県別の人口データを取得する非同期関数を呼び出す
   const populationPromises = selectedPrefectures.value.map((prefCode) =>
     fetchPopulation(prefCode)
@@ -130,7 +133,7 @@ async function onPrefectureChange() {
     };
   });
   chartOptions.value.series = series;
-  isLoading.value = false;
+  loadingStore.setLoading(false);
 }
 
 // 都道府県データを取得
