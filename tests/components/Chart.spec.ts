@@ -1,12 +1,10 @@
-import { describe, test } from "vitest";
-import { setup } from "@nuxt/test-utils";
+import { describe, test, expect } from "vitest";
+import { mount } from "@vue/test-utils";
+import Chart from "../../components/Chart.vue";
 
-describe("My test", async () => {
-  await setup({
-    // test context options
-  });
-
-  test("my test", () => {
-    // ...
+describe("Chart.vue", () => {
+  test("Component", () => {
+    const wrapper = mount(Chart);
+    expect(wrapper).toMatchSnapshot();
   });
 });
